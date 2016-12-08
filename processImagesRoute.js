@@ -1,5 +1,9 @@
 "use strict";
 
+// Sample code file from a complete project - a feed processer batch process
+// Route for image processing.  Converts images directed by to predefined template definitions
+// Uses async library, and custom batch processing
+
 var express = require('express');
 var router = express.Router();
 var FeedEntity = require('../models/feed.js');
@@ -21,9 +25,6 @@ var logicalCallStack = require('../modules/logicalCallStack');
 var log = require('../modules/logger');
 var sharp = require('sharp');
 var StatClass = require('../modules/stat.js');
-
-// TODO: decide what to do with gifs
-// TODO: decide what to do with non-resizeble buffer errors (one test was a jpg - but gif can come into play here)
 
 function resizeImage(feed, post, image, targetW, targetH, minOrMax, crop, quality, ext, index, callbackFn) {
     var format = null;
@@ -186,7 +187,6 @@ function resizeImages(feedValue, batch, lcsBatch, statImageConversions, cbResize
                                                                     },
                                                                     function (err) {
                                                                         log.debug('IGen Series complete');
-                                                                        //post.imagesProcessed = post.imagesProcessed && (err == null);
                                                                         lcsResizeImage.end(err);
                                                                         cbWaterfallExtract(null, post);
                                                                     }
@@ -205,7 +205,6 @@ function resizeImages(feedValue, batch, lcsBatch, statImageConversions, cbResize
                                     // cbWaterfallExtract
                                     function (err, post) {
                                         if (err) {
-                                            // One batch item per feed here
                                             batchItem.status = 'Error';
                                             batchItem.error = err.message;
                                             batchItem.stack = JSON.stringify(err.stack);
